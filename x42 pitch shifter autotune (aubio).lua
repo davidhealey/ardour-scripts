@@ -90,7 +90,7 @@ function factory () return function ()
     -- add zero point
     cl:editor_add (r:position() - 0.1 * sr, 0, false)
 
-    -- 1/nth of region's length - points will be spaced this distance apart - but clustered at the beginning
+    -- 1/nth of region's length - points will be spaced this distance apart
     local interval = r:length() / n
 
     -- add the rest of the pitch points
@@ -98,9 +98,9 @@ function factory () return function ()
     local lastPos = r:position()
     local lastOffset = nil
     for i, d in ipairs(data) do
-      if (d.timestamp > lastPos + interval or d.timestamp < r:position() + interval * 5) and d.timestamp < r:position() + r:length() - 1.5 * sr then        
+      if d.timestamp > lastPos + interval and d.timestamp < r:position() + r:length() - 1.5 * sr then        
           offset = getOffset(d.value) -- get offset from frequency value
-          if offset ~= lastOffset and (offset < 50 and offset > -50) then
+          if offset ~= lastOffset and (offset < 1 and offset > -1) then
             cl:editor_add (d.timestamp, offset, false) -- add pitch point
             lastPos = d.timestamp -- update last position
             lastOffset = offset
@@ -157,7 +157,7 @@ function factory () return function ()
 		{type = "number", key = "maxfreq", title = "Maximum Fundamental Frequency (Hz)", min = 1, max = sr/2, default = 2500},
     {type = "radio", key = "wraprange", title = "Octave wrapping", values = {["Yes"] = 1, ["No"] = 0}, default = "No"},
     {type = "slider", key = "silencethreshold", title = "Silence Threshold (dB)", min = -120, max = 0, default = -75},
-    {type = "number", key = "interval", title = "Point spacing as fraction of region", min = 20, max = 100, default = 70},
+    {type = "number", key = "interval", title = "Point spacing as fraction of region", min = 20, max = 100, default = 40},
 	}
 
  	local od = LuaDialog.Dialog ("Pitch Shifter Autotune", dialog_options)
