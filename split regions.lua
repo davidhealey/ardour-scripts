@@ -98,7 +98,7 @@ function factory () return function ()
 	}
 
 	-- show dialog
-  local od = LuaDialog.Dialog ("Pitch Shifter Autotune", dialog_options)
+  local od = LuaDialog.Dialog ("Split Regions", dialog_options)
   local rv = od:run ()
 	
   if rv then
