@@ -28,8 +28,8 @@ function factory ()
 		local defaults = note_names_to_regions_input_values
 		if defaults == nil then
 			defaults = {}
-			defaults["note"] = -1
-			defaults["num_rr"] = 3
+			defaults["note"] = 0
+			defaults["num_rr"] = 4
 		end
 
 		local dialog_options = {
@@ -39,10 +39,10 @@ function factory ()
 
 		-- undo stuff
 		local add_undo = false -- keep track of changes
-		Session:begin_reversible_command ("Rename Regions")
+		Session:begin_reversible_command ("Assign note names to regions")
 
 		-- show dialog
-		local od = LuaDialog.Dialog ("Rename Regions", dialog_options)
+		local od = LuaDialog.Dialog ("Note names to regions", dialog_options)
 		local rv = od:run()
 
 		if rv then
@@ -71,7 +71,7 @@ function factory ()
 				
 				if count == 0 then
 					noteNum = noteNum + 1;
-					name = numToPitch (rv.note + noteNum)
+					name = numToPitch (rv.note + noteNum - 1)
 				end
 
 				count = (count + 1) % rv.num_rr;
