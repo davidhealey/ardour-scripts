@@ -1,6 +1,6 @@
 ardour {
 	["type"]    = "EditorAction",
-	name        = "Rubberband Pitch Shift",
+	name        = "x42 Autotune Auto Pitch Shift",
 	license     = "MIT",
 	author      = "David Healey",
 	description = [[Automatically adds automation data for a pitch shifter plugin to correct sample tuning.]]
@@ -14,8 +14,8 @@ function factory () return function ()
 	local vamp = ARDOUR.LuaAPI.Vamp("libardourvamppyin:pyin", sr)
   vamp:plugin():setParameter ("lowampsuppression", 0.0) -- Don't supress low amplitude estimates
 
-	local automationIndex = 1
-	local useSemiTones = false
+	local automationIndex = 6 -- pitch in semitones
+	local useSemiTones = true
 
 	-- prepare undo operation
 	local add_undo = false -- keep track if something has changed
@@ -33,7 +33,7 @@ function factory () return function ()
      if plugin and plugin:isnil() == false then
        local name = plugin:display_name()
 
-       if name == "Rubberband (Mono)" or name == "Rubber Band Mono Pitch Shifter" then
+       if name == "x42-Autotune" then
          break
        else
         plugin = nil

@@ -8,7 +8,7 @@ ardour {
 
 function factory ()
 
-	local note_names_to_regions_input_values --Persistent variable (session lifespan)
+	local notes_to_regions_input_values --Persistent variable (session lifespan)
 
 	return function ()
 
@@ -25,7 +25,7 @@ function factory ()
 		-- Define dialog
 
 		-- When avaiable use previously used values as defaults
-		local defaults = note_names_to_regions_input_values
+		local defaults = notes_to_regions_input_values
 		if defaults == nil then
 			defaults = {}
 			defaults["note"] = 0

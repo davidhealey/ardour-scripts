@@ -98,7 +98,7 @@ function factory ()
 				vamp:plugin ():setParameter ("pitchtype", pitchtype)
 			 	vamp:analyze (r:to_readable (), 0, callback)
 		 	else
-				for i = 0, 4, 1 do
+				for i = 0, 3, 1 do
 					vamp:plugin ():setParameter ("pitchtype", i)
 					vamp:analyze (r:to_readable (), 0, callback)
 				end
@@ -146,7 +146,7 @@ function factory ()
 		end
 
   	local dialog_options = {
-    	{type="dropdown", key="pitchtype", title="Pitch Detection Method", values={["YIN"]=0, ["Spectral"]=1, ["Schmitt"]=2, ["Fast Harmonic"]=3, ["YIN + FFT"]=4, ["All (slow)"]=5}, default=defaults["pitchtype"]},
+    	{type="dropdown", key="pitchtype", title="Pitch Detection Method", values={["YIN"]=0, ["Spectral"]=1, ["Schmitt"]=2, ["Fast Harmonic"]=3, ["YIN + FFT"]=4, ["Multi (slow)"]=5}, default=defaults["pitchtype"]},
     	{type="number", key="minfreq", title="Minimum Fundamental Frequency (Hz)", min=1, max=sr/2, default=defaults["minfreq"]},
     	{type="number", key="maxfreq", title="Maximum Fundamental Frequency (Hz)", min=1, max=sr/2, default=defaults["maxfreq"]},
       {type="radio", key="wraprange", title="Octave wrapping", values={["Yes"]=1, ["No"]=0}, default=defaults["wraprange"]},

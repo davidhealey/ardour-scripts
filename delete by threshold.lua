@@ -14,7 +14,7 @@ function factory ()
       local sr = Session:nominal_sample_rate ()
       local sel = Editor:get_selection ()
     	local rl = sel.regions:regionlist ()
-    	
+
     	-- FUNCTIONS --
 
 			--Undo stuff
@@ -36,28 +36,35 @@ function factory ()
 
         pdialog = LuaDialog.ProgressWindow ("Delete by threshold", true)
 
+				local regionsToDelete = {}
+				local totalToDelete = 0;
+
         for i, r in ipairs (rl:table ()) do
-          
+					if ((r:length() / sr) * 1000 <= rv.threshold) then
+						table.insert(regionsToDelete, r)
+						totalToDelete = totalToDelete + 1
+					end
+				end
+
+				for i, r in pairs(regionsToDelete) do
+
           -- Update progress
-      		if pdialog:progress (i / rl:size (), i .. "/" .. rl:size ()) then
+      		if pdialog:progress (i / totalToDelete, i .. "/" .. totalToDelete) then
       			break
       		end
-          
-          local playlist = r:playlist ()
-          
-          -- preare for undo operation
-          playlist:to_stateful():clear_changes()
-          
-					-- convert sample length to milliseconds and compare against threshold
-					if ((r:length() / sr) * 1000 <= rv.threshold) then
-						playlist:remove_region(r)
-					end          
-						
+
+					local playlist = r:playlist ()
+
+					-- preare for undo operation
+					playlist:to_stateful():clear_changes()
+
+					playlist:remove_region(r)
+
 					-- create a diff of the performed work, add it to the session's undo stack
 					if not Session:add_stateful_diff_command (playlist:to_statefuldestructible()):empty () then
 						add_undo = true
 					end
-          
+
         end
 
 			end
@@ -79,5 +86,5 @@ function factory ()
         pdialog:done ()
     	end
 
-    end    
+    end
 end
