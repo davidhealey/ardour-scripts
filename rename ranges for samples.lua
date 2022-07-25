@@ -18,24 +18,56 @@ function factory ()
 
     -- FUNCTIONS --
 
+		function indexOf(array, value)
+		    for i, v in ipairs(array) do
+		        if v == value then
+		            return i - 1
+		        end
+		    end
+		    return nil
+		end
+
     function sortByPosition(a, b)
       return a:position() < b:position()        
     end
 
+		function get_note_number_from_name (name)
+
+			local notes = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"}
+			
+			local n = string.sub(name, 0, 1) -- letter
+			local o = string.sub(name, string.len(name), string.len(name)) -- octave
+			local s = 0 -- sign
+			
+			if (string.len(name) == 3) then
+				s = 1
+			end
+										
+			return indexOf(notes, n) + 12 * (o + 2) + s
+    end
+
 		-- assemble the name
-		function get_name(count, input)
+		function get_name(count, input, region_name)
 			local name = ""
 			local rr = math.floor(input["rr"] + (count % input["num_rr"])) -- calculate rr number
-			
+						
 			if input["inst"] ~= "" then name = name .. input["inst"] end
 			if input["art"] ~= "" then name = name .. "_" .. input["art"] end			
-			if input["note"] ~= -1 then
+			
+			local num = input["note"] + count
+			
+			if (input["region_note"] == true) then
+				num = get_note_number_from_name (region_name)
+			end
+			
+			if input["note"] ~= -1 or (input["region_note"] == true and num ~= nil) then
 			  if input["num_rr"] > 0 then
-			    name = name .. "_" .. math.floor(input["note"] + (count / input["num_rr"]))
+			    name = name .. "_" .. math.floor(num + (count / input["num_rr"]))
 			  else
-          name = name .. "_" .. math.floor(input["note"] + count)
+          name = name .. "_" .. math.floor(num)
 			  end
-      end
+      end	
+			
 			if input["lo_vel"] ~= -1 then name = name .. "_lovel" .. math.floor(input["lo_vel"]) end
 			if input["hi_vel"] ~= -1 then name = name .. "_hivel" .. math.floor(input["hi_vel"]) end
 			if input["dyn"] ~= -1 then name = name .. "_dynamic" .. math.floor(input["dyn"]) end
@@ -75,7 +107,7 @@ function factory ()
 			defaults["lo_vel"] = -1
 			defaults["hi_vel"] = -1
 			defaults["dyn"] = -1
-			defaults["num_rr"] = 3
+			defaults["num_rr"] = 0
 			defaults["rr"] = 0
 		end
 
@@ -83,6 +115,7 @@ function factory ()
 			{ type = "entry", key = "inst", title = "Instrument", default = defaults["inst"] },
 			{ type = "entry", key = "art", title = "Articulation", default = defaults["art"] },
 			{ type = "number", key = "note", title = "MIDI Note", min = -1, max = 127, default = defaults["note"] },
+			{ type = "checkbox", key = "region_note", default = true, title = "Get note from region" },
 			{ type = "number", key = "lo_vel", title = "Low Velocity", min = -1, max = 127, default = defaults["lo_vel"] },
 			{ type = "number", key = "hi_vel", title = "High Velocity", min = -1, max = 127, default = defaults["hi_vel"] },
 			{ type = "number", key = "dyn", title = "Dynamic", min = -1, max = 127, default = defaults["dyn"] },
@@ -136,7 +169,16 @@ function factory ()
           			break
           		end
 					
-  						l:set_name(get_name(count, rv))
+							local rname = ""
+					
+							for key, r in pairs(rl:table()) do
+								if (r:position() == p) then 
+									rname = r:name()
+									break
+								end									
+							end
+					
+  						l:set_name(get_name(count, rv, rname))
   						count = count + 1
   					end
   				end
