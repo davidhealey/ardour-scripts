@@ -53,20 +53,20 @@ function factory ()
 						
 			if input["inst"] ~= "" then name = name .. input["inst"] end
 			if input["art"] ~= "" then name = name .. "_" .. input["art"] end			
-			
-			local num = input["note"] + count
-			
-			if (input["region_note"] == true) then
-				num = get_note_number_from_name (region_name)
+									
+			if (input["note"] ~= -1) then
+				if input["num_rr"] > 0 then
+					name = name .. "_" .. math.floor(input["note"] + (count / input["num_rr"]))
+				else
+					name = name .. "_" .. math.floor(input["note"] + count)
+				end
+			else 
+				local num = get_note_number_from_name (region_name)
+				
+				if (input["region_note"] == true and num ~= nil) then
+					name = name .. "_" .. math.floor(num)
+				end
 			end
-			
-			if input["note"] ~= -1 or (input["region_note"] == true and num ~= nil) then
-			  if input["num_rr"] > 0 then
-			    name = name .. "_" .. math.floor(num + (count / input["num_rr"]))
-			  else
-          name = name .. "_" .. math.floor(num)
-			  end
-      end	
 			
 			if input["lo_vel"] ~= -1 then name = name .. "_lovel" .. math.floor(input["lo_vel"]) end
 			if input["hi_vel"] ~= -1 then name = name .. "_hivel" .. math.floor(input["hi_vel"]) end
