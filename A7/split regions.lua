@@ -30,7 +30,7 @@ function factory () return function ()
 
   -- FUNCTIONS --
 
-  function analyzeRegion(r)
+  function analyzeRegion(r, channel)
   		
 		local result = {};
 
@@ -48,7 +48,7 @@ function factory () return function ()
 
     -- Run the plugin
 		local a = r:to_audioregion()
-		vamp:analyze (a:to_readable (), 0, callback)
+		vamp:analyze (a:to_readable (), channel, callback)
 		
     -- reset for next region
 		vamp:reset ()
@@ -97,7 +97,8 @@ function factory () return function ()
   -- setup dialog
   local dialog_options = {
 		{type = "number", key = "threshold", title = "Silence Threshold (dB)", min = -120, max = 0, default = -60},
-		{type = "number", key = "precut", title = "Precut, time before onset (ms)", min = 0, max = 1000, default = 250}
+		{type = "number", key = "precut", title = "Precut, time before onset (ms)", min = 0, max = 1000, default = 250},
+		{type = "number", key = "channel", title = "Audio Channel", min = 0, max = 50, default = 0}
 	}
 
 	-- show dialog
@@ -120,13 +121,13 @@ function factory () return function ()
   			break
   		end
 
-      local peaks = analyzeRegion(r)
+      local peaks = analyzeRegion(r, rv.channel)
       splitRegion(r, peaks, rv.threshold, (rv.precut * sr) / 1000)
 
     end
 
     if not Session:add_stateful_diff_command (playlist:to_statefuldestructible ()):empty () then
-			add_undo = true -- is something has changed, we need to save it at the end.
+			add_undo = true -- if something has changed, we need to save it at the end.
     end
 
 	end
