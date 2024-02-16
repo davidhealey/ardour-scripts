@@ -27,7 +27,8 @@ function factory ()
     	local dialog_options = {
 				{type="dropdown", key="note", title="First Note", values={["C"]=0, ["C#"]=1, ["D"]=2, ["D#"]=3, ["E"]=4, ["F"]=5, ["F#"]=6, ["G"]=7, ["G#"]=8, ["A"]=9, ["A#"]=10, ["B"]=11}, default="C"},
 				{type="number", key="octave", title="First Octave", min=-2, max=8, default=3},
-        {type = "number", key = "skip", title = "Repetitions", min = 1, max = 20, default = 2}
+        {type = "number", key = "rep", title = "Repetitions", min = 1, max = 20, default = 2},
+				{type = "number", key = "increment", title = "Increment", min = 1, max = 12, default = 1}
     	}
 
     	-- show dialog
@@ -62,11 +63,11 @@ function factory ()
 					
 					r:set_name(name)
 
-					count = (count + 1) % rv["skip"];
+					count = (count + 1) % rv["rep"];
 					
 					if (count == 0) then						
 						
-						note = (note + 1) % 12
+						note = (note + rv["increment"]) % 12
 												
 						if (note == 0) then
 							octave = octave + 1;
