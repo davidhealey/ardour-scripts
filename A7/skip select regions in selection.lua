@@ -25,7 +25,8 @@ function factory ()
 
       -- setup dialog
     	local dialog_options = {
-        {type = "number", key = "skip", title = "Skip", min = 1, max = 1000, default = 2},
+        {type = "number", key = "skip", title = "Skip", min = 1, max = 100, default = 2},
+				{type = "number", key = "select", title = "Select", min = 1, max = 50, default = 1},
     	}
 
     	-- show dialog
@@ -47,6 +48,7 @@ function factory ()
 
         local sl = ArdourUI.SelectionList () -- empty selection list
 				local count = 0;
+				local selected = 0;
 
 				for i, r in ipairs (sorted) do
 
@@ -54,10 +56,13 @@ function factory ()
      				-- get RegionView (GUI object to be selected)
     				local region_view = Editor:regionview_from_region (r)
     				-- add it to the list of Objects to be selected
-    			 	sl:push_back (region_view);
+    			 	sl:push_back (region_view)
+						selected = (selected + 1) % rv.select
 				  end
 
-					count = (count + 1) % rv.skip
+					if (selected == 0) then
+						count = (count + 1) % rv.skip
+					end
 
         end
 
