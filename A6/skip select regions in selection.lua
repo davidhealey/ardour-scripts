@@ -14,10 +14,10 @@ function factory ()
 
     -- FUNCTIONS --
 
-    -- sort regions by position
-    function posSort(a, b)
-      return a:position() < b:position()
-    end
+		-- Sorts regions by position, left to right
+		function sortByPosition (a, b)
+			return a:position () < b:position ()        
+		end
 
     -- MAIN --
 
@@ -35,14 +35,20 @@ function factory ()
       if rv then
 
         -- sort selected regions by position
-        table.sort(rl:table (), posSort)
+        --table.sort(rl:table (), posSort)
+				
+				local sorted = {}
+				
+				for r in rl:iter () do
+					table.insert (sorted, r)    		    		
+				end
+
+				table.sort(sorted, sortByPosition)
 
         local sl = ArdourUI.SelectionList () -- empty selection list
 				local count = 0;
 
-				for i = rl:size (), 1, -1 do
-
-					local r = rl:table ()[i]
+				for i, r in ipairs (sorted) do
 
           if count == 0 then
      				-- get RegionView (GUI object to be selected)
