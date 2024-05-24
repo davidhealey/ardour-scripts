@@ -43,26 +43,40 @@ function factory ()
 				s = 1
 			end
 										
-			return indexOf(notes, n) + 12 * (o + 2) + s
+			local index = indexOf(notes, n);
+			
+			if index == nil then
+				return nil
+			end
+										
+			return index + 12 * (o + 2) + s
     end
 
 		-- assemble the name
 		function get_name(count, input, region_name)
 			local name = ""
 			local rr = math.floor(input["rr"] + (count % input["num_rr"])) -- calculate rr number
+			local group = math.floor(input["group"] + (count % input["num_groups"])) -- calculate group number
 						
 			if input["inst"] ~= "" then name = name .. input["inst"] end
 			if input["art"] ~= "" then name = name .. "_" .. input["art"] end			
 									
 			if (input["note"] ~= -1) then
+				
 				if input["num_rr"] > 0 then
 					name = name .. "_" .. math.floor(input["note"] + (count / input["num_rr"]))
 				else
 					name = name .. "_" .. math.floor(input["note"] + count)
 				end
-			else 
-				local num = get_note_number_from_name (region_name)
 				
+			elseif input["region_note"] ~= 0 then
+
+				local num = get_note_number_from_name (region_name)
+
+				if num == nil then
+					num = "Invalid note number"
+				end
+
 				if (input["region_note"] == true and num ~= nil) then
 					name = name .. "_" .. math.floor(num)
 				end
@@ -72,6 +86,7 @@ function factory ()
 			if input["hi_vel"] ~= -1 then name = name .. "_hivel" .. math.floor(input["hi_vel"]) end
 			if input["dyn"] ~= -1 then name = name .. "_dynamic" .. math.floor(input["dyn"]) end
 			if input["num_rr"] > 0 then name = name .. "_rr" .. rr end
+			if input["num_groups"] > 0 then name = name .. "_group" .. group end
 
 			return name
 		end
@@ -109,6 +124,7 @@ function factory ()
 			defaults["dyn"] = -1
 			defaults["num_rr"] = 0
 			defaults["rr"] = 0
+			defaults["group"] = 0
 		end
 
 		local dialog_options = {
@@ -119,8 +135,10 @@ function factory ()
 			{ type = "number", key = "lo_vel", title = "Low Velocity", min = -1, max = 127, default = defaults["lo_vel"] },
 			{ type = "number", key = "hi_vel", title = "High Velocity", min = -1, max = 127, default = defaults["hi_vel"] },
 			{ type = "number", key = "dyn", title = "Dynamic", min = -1, max = 127, default = defaults["dyn"] },
-			{ type = "number", key = "num_rr", title = "No. of Round Robin", min = 0, max = 24, default = defaults["num_rr"] },
-			{ type = "number", key = "rr", title = "First Round Robin", min = 0, max = 127, default = defaults["rr"] }
+			{ type = "number", key = "num_rr", title = "No. of Round Robin", min = 0, max = 100, default = defaults["num_rr"] },
+			{ type = "number", key = "rr", title = "First Round Robin", min = 0, max = 127, default = defaults["rr"] },
+			{ type = "number", key = "num_groups", title = "No. of Groups", min = 0, max = 100, default = defaults["num_groups"] },
+			{ type = "number", key = "group", title = "First Group", min = 0, max = 127, default = defaults["group"] }
 		}
 
 		-- show dialog
