@@ -27,10 +27,6 @@ function factory ()
 		    return nil
 		end
 
-    function sortByPosition(a, b)
-      return a:position() < b:position()        
-    end
-
 		function get_note_number_from_name (name)
 
 			local notes = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"}
@@ -68,7 +64,7 @@ function factory ()
 				else
 					name = name .. "_" .. math.floor(input["note"] + count)
 				end
-				
+
 			elseif input["region_note"] ~= 0 then
 
 				local num = get_note_number_from_name (region_name)
@@ -77,7 +73,7 @@ function factory ()
 					num = "Invalid note number"
 				end
 
-				if (input["region_note"] == true and num ~= nil) then
+				if (input["region_note"] == true and type(num) == "number" and num ~= nil) then
 					name = name .. "_" .. math.floor(num)
 				end
 			end
@@ -95,7 +91,7 @@ function factory ()
 		  
 		  local results = {}
 		  
-		  for i, r in pairs(rl:table ()) do
+		  for i, r in pairs(region_list:table ()) do
   
 		    if results[r:name ()] == nil then
 		      results[r:name ()] = {}
@@ -179,8 +175,8 @@ function factory ()
   			local count = 0
   			for k, p in ipairs(positions) do --Each region position
   				for l in loc:iter() do --Each location (range marker)
-				
-  					if (l:is_range_marker() == true and l:start() == p) then --If marker starts at region position
+
+  					if (l:is_range_marker() == true and l:start():samples() == p:samples()) then --If marker starts at region position
 
   			  		-- Update progress
           		if pdialog:progress (count / #positions, count .. "/" .. #positions) then
