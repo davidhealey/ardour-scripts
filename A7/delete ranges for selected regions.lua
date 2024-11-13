@@ -30,7 +30,7 @@ function factory ()
 		-- Iterate positions and find matching ranges (if any) then rename
 		for k, p in ipairs(positions) do --Each region position
 			for l in loc:iter() do --Each location (range marker)
-				if (l:is_range_marker() == true and l:start() == p) then --If marker starts at region position
+				if (l:is_range_marker() == true and l:start():samples() == p:samples()) then --If marker starts at region position
 					Session:locations():remove(l)
 				end
 			end
